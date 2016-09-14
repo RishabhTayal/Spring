@@ -28,7 +28,11 @@ public class TransitionManager: NSObject, UIViewControllerTransitioningDelegate,
     var duration = 0.3
     
     public func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        let container = transitionContext.containerView()
+        #if swift(>=2.3)
+            let container = transitionContext.containerView()
+        #else
+            let container = transitionContext.containerView()!
+        #endif
         let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey)!
         let toView = transitionContext.viewForKey(UITransitionContextToViewKey)!
         
@@ -44,7 +48,7 @@ public class TransitionManager: NSObject, UIViewControllerTransitioningDelegate,
             }
         }
         else {
-
+            
             // 1. Rotating will change the bounds
             // 2. we have to properly reset toView
             // to the actual container's bounds, at
@@ -54,10 +58,10 @@ public class TransitionManager: NSObject, UIViewControllerTransitioningDelegate,
             toView.transform = CGAffineTransformIdentity
             toView.frame = container.bounds
             toView.transform = transform
-
+            
             container.addSubview(toView)
             container.addSubview(fromView)
-
+            
             SpringAnimation.springEaseInOut(duration) {
                 fromView.transform = CGAffineTransformMakeTranslation(0, fromView.frame.size.height)
                 toView.transform = CGAffineTransformIdentity
